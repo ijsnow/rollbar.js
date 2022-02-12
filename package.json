@@ -11,6 +11,7 @@
   "browser": "dist/rollbar.umd.min.js",
   "types": "./index.d.ts",
   "dependencies": {
+    "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "async": "~1.2.1",
     "console-polyfill": "0.3.0",
     "error-stack-parser": "^2.0.4",
@@ -26,6 +27,7 @@
     "babel-loader": "^8.0.4",
     "bluebird": "^3.3.5",
     "browserstack-api": "0.0.5",
+    "cargo-cp-artifact": "^0.1",
     "chai": "^4.2.0",
     "chalk": "^1.1.1",
     "eslint": "^6.8.0",
@@ -83,12 +85,14 @@
     "decache": "^3.0.5"
   },
   "scripts": {
+    "pretest": "npm run prebuild",
     "build": "./node_modules/.bin/grunt",
     "test": "./node_modules/.bin/grunt test",
     "test-browser": "./node_modules/.bin/grunt test-browser",
     "test-server": "./node_modules/.bin/grunt test-server",
     "test_ci": "./node_modules/.bin/grunt test",
-    "lint": "./node_modules/.bin/eslint . --ext .js"
+    "lint": "./node_modules/.bin/eslint . --ext .js",
+    "prebuild": "cargo-cp-artifact -a cdylib api api/index.node -- cargo build --release --manifest-path api/Cargo.toml --message-format=json-render-diagnostics"
   },
   "cdn": {
     "host": "cdn.rollbar.com"

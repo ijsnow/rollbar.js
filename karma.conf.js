@@ -3,7 +3,12 @@ var webpack = require('webpack');
 var defaults = require('./defaults');
 var browserStackBrowsers = require('./browserstack.browsers');
 
+const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
+
 var defaultsPlugin = new webpack.DefinePlugin(defaults);
+var wasmPlugin = new WasmPackPlugin({
+  crateDirectory: path.resolve(__dirname, 'api'),
+});
 
 var allBrowsers = browserStackBrowsers.filter('bs_all');
 var allBrowsersByBrowser = {
@@ -78,9 +83,14 @@ module.exports = function (config) {
     forceJSONP: true,
 
     webpack: {
-      plugins: [defaultsPlugin],
+      plugins: [wasmPlugin, defaultsPlugin],
       devtool: 'inline-source-map',
       performance: { hints: false },
+      resolve: {
+        alias: {
+          '@rollbar/api': path.resolve(__dirname, 'api/pkg'),
+        },
+      },
       module: {
         rules: [
           {
@@ -101,12 +111,12 @@ module.exports = function (config) {
             test: /(mootootls|requirejs)\.js$/,
             loader: 'script'
           },
-          {
-            enforce: 'post',
-            test: /\.js$/,
-            exclude: [/node_modules/, /vendor/, /lib/, /dist/, /test/],
-            loader: 'istanbul-instrumenter-loader'
-          }
+          // {
+          //   enforce: 'post',
+          //   test: /\.js$/,
+          //   exclude: [/node_modules/, /vendor/, /lib/, /dist/, /test/],
+          //   loader: 'istanbul-instrumenter-loader',
+          // }
         ],
       }
     },

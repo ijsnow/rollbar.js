@@ -1,0 +1,27 @@
+[package]
+name = "api"
+version = "0.1.0"
+license = "ISC"
+edition = "2018"
+exclude = ["index.node"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+url = "2.2.2"
+serde = { version = "1.0", features = ["derive"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+js-sys = "0.3.56"
+
+[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
+wasm-bindgen-test = "0.3.29"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies.neon]
+version = "0.9"
+default-features = false
+features = ["napi-6"]

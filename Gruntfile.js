@@ -22,7 +22,7 @@ function findTests(context) {
   if (context !== 'browser') {
     return {};
   }
-  var files = glob.sync('test/**/!(server.)*.test.js');
+  var files = glob.sync('test/**/!(server.)api.test.js');
   var mapping = {};
 
   files.forEach(function(file) {
@@ -161,7 +161,7 @@ module.exports = function(grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['test/server.*.test.js']
+        src: ['test/server.api.test.js']
       }
     },
 

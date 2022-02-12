@@ -27,6 +27,27 @@ function TestTransportGenerator() {
 }
 
 describe('Api()', function() {
+  it('can use modules written in rust', function() {
+    return import('@rollbar/api').then(rust => {
+        var transport = new (TestTransportGenerator())();
+        var endpoint = 'http://woo.foo.com/api/42';
+
+        var url = {
+            parse: rust.parseUrl
+        };
+
+        var backup = null;
+        var accessToken = 'abc123';
+        var options = {accessToken, endpoint};
+        var api = new API(options, transport, url, backup);
+
+        expect(api.transportOptions.hostname).to.eql('woo.foo.com');
+        expect(api.transportOptions.path).to.match(/\/api\/42/);
+        expect(api.transportOptions.protocol).to.eql('http:');
+        expect(api.transportOptions.port).to.eql('443');
+    });
+  });
+
   it('use the defaults if no custom endpoint is given', function(done) {
     var transport = new (TestTransportGenerator())();
     var url = {
@@ -44,8 +65,10 @@ describe('Api()', function() {
     expect(api.transportOptions.hostname).to.eql('api.rollbar.com');
     expect(api.transportOptions.path).to.match(/\/api\/1/);
     expect(api.transportOptions.protocol).to.eql('https:');
+
     done();
   });
+
   it('should parse the endpoint and use that if given', function(done) {
     var transport = new (TestTransportGenerator())();
     var endpoint = 'http://woo.foo.com/api/42';
